@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct DocumentDetail: View {
+    @AppStorage(.rootPath) var rootPath: URL?
     @Environment(\.displayScale) var displayScale
     @State var doc: Document
     @State var personSelection: Person? = nil
     @State var previewData: Data? = nil
 
     var previewImage: NSImage? { guard let previewData else { return nil }; return NSImage(data: previewData) }
-    var docmage: NSImage? { previewImage ?? doc.thumbnailImage }
+    var docImage: NSImage? { previewImage ?? doc.thumbnailImage }
+    var filenameDisplay: String { doc.displayPath(root: rootPath) }
 
     init(_ doc: Document) {
         self._doc = State(initialValue: doc)
@@ -23,7 +25,7 @@ struct DocumentDetail: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                Text("URL: \(doc.fileURL.path)")
+                Text("File: \(filenameDisplay)")
                 HStack {
                     Picker("Category", selection: $doc.category) {
                         ForEach(Document.Category.allCases) { category in
@@ -37,8 +39,8 @@ struct DocumentDetail: View {
                 Toggle("Incomplete", isOn: $doc.incomplete)
                     .toggleStyle(.checkbox)
                 
-                if let docmage {
-                    Image(nsImage: docmage)
+                if let docImage {
+                    Image(nsImage: docImage)
                         .border(.secondary)
                         .padding(.top)
                 }

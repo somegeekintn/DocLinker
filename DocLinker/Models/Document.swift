@@ -135,4 +135,10 @@ final class Document: Codable {
             Logger.app.error("Failed to resolve bookmark: \(error)")
         }
     }
+
+    func displayPath(root: URL?) -> String {
+        guard let root, fileURL.path.hasPrefix(root.path) else { return filename }
+
+        return String(fileURL.path.dropFirst(root.path.count))
+    }
 }

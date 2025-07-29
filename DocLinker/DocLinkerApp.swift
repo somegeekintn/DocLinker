@@ -56,6 +56,8 @@ struct DocLinkerApp: App {
                     .keyboardShortcut("s", modifiers: [.command, .shift])
             }
         }
+
+        Settings { SettingsView() }
     }
 
     func exportJSON() {

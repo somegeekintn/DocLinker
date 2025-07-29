@@ -8,10 +8,15 @@
 import SwiftUI
 
 struct DocumentRow: View {
-    let doc: Document
+    @AppStorage(.rootPath) var rootPath: URL?
 
-    init(_ doc: Document) {
+    let doc: Document
+    let inNavigator: Bool
+    var filenameDisplay: String { doc.displayPath(root: rootPath) }
+
+    init(_ doc: Document, inNavigator: Bool) {
         self.doc = doc
+        self.inNavigator = inNavigator
     }
 
     var body: some View {
@@ -20,16 +25,24 @@ struct DocumentRow: View {
                 Image(nsImage: thumbnail)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 32)
             }
-            Text(doc.filename)
+            Text(filenameDisplay)
+                .font(.body)
+        }
+        .frame(height: 24)
+        .contextMenu {
+            if !inNavigator {
+                Button("Reveal in Navigator") { }
+            }
+            Button("Reveal in Finder") { }
         }
     }
+
 }
 
 #Preview {
     if let doc = try? Document(fileURL: URL(fileURLWithPath: "/Users/casey")) {
-        DocumentRow(doc)
+        DocumentRow(doc, inNavigator: false)
     }
     else {
         Text("Failed")

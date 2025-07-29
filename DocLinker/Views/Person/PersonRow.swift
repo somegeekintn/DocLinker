@@ -22,10 +22,11 @@ struct PersonRow: View {
             thumbnailImage
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 32)
 
             Text("\(person.identifier): \(person.lastName), \(person.firstName)")
+                .font(.body)
         }
+        .frame(height: 24)
     }
 }
 

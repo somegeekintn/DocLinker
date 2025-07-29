@@ -23,7 +23,7 @@ struct DocumentList: View {
     var body: some View {
         List() {
             ForEach(docs) { doc in
-                NavigationLink(value: doc) { DocumentRow(doc) }
+                NavigationLink(value: doc) { DocumentRow(doc, inNavigator: true) }
             }
             .onDelete(perform: deleteItems)
         }

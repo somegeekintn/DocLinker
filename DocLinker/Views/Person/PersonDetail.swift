@@ -29,6 +29,7 @@ struct PersonDetail: View {
         }
         else {
             fullVersion
+                .navigationTitle("\(person.firstName) \(person.lastName)")
         }
     }
 
@@ -47,7 +48,7 @@ struct PersonDetail: View {
             Text("Items")
             List(selection: $docSelection) {
                 ForEach(person.docs, id: \.self) { doc in
-                    DocumentRow(doc)
+                    DocumentRow(doc, inNavigator: false)
                 }
             }
         }
