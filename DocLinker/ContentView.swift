@@ -9,51 +9,59 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    enum Selection: CaseIterable {
+        case people
+        case documents
+
+        var labelName: String {
+            switch self {
+            case .people:       "People"
+            case .documents:    "Documents"
+            }
+        }
+
+        var imageName: String {
+            switch self {
+            case .people:       "person"
+            case .documents:    "document"
+            }
+        }
+    }
+
+    @State var selection = Selection.people
 
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+            VStack {
+                Group {
+                    switch selection {
+                    case .people:       PersonOrganizer()
+                    case .documents:    DocumentOrganizer()
                     }
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-            .toolbar {
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                .padding(.bottom, 8)
+
+                Divider()
+
+                HStack(spacing: 16) {
+                    ForEach(Selection.allCases, id: \.self) { item in
+                        SimpleButton(label: item.labelName, imageName: item.imageName, selected: selection == item) {
+                            withAnimation { selection = item }
+                        }
                     }
                 }
+                .padding()
             }
+            .navigationDestination(for: Document.self) { DocumentDetail($0).id($0.fileURL) }
+            .navigationDestination(for: Person.self) { PersonDetail($0).id($0.identifier) }
+            .navigationSplitViewColumnWidth(min: 264, ideal: 320)
         } detail: {
             Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [Document.self, Person.self], inMemory: true)
 }
