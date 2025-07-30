@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DocumentRow: View {
     @AppStorage(.rootPath) var rootPath: URL?
+    @Environment(\.revealItem) var revealItem
 
     let doc: Document
     let inNavigator: Bool
@@ -32,9 +33,9 @@ struct DocumentRow: View {
         .frame(height: 24)
         .contextMenu {
             if !inNavigator {
-                Button("Reveal in Navigator") { }
+                Button("Reveal in Navigator") { revealItem(.documents(doc)) }
             }
-            Button("Reveal in Finder") { }
+            Button("Reveal in Finder") { NSWorkspace.shared.activateFileViewerSelecting([doc.fileURL]) }
         }
     }
 

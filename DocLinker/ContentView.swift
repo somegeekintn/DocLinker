@@ -9,34 +9,29 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    enum Selection: CaseIterable {
-        case people
-        case documents
+    @State var itemSelection = ItemSelection.people(nil)
 
-        var labelName: String {
-            switch self {
-            case .people:       "People"
-            case .documents:    "Documents"
-            }
-        }
-
-        var imageName: String {
-            switch self {
-            case .people:       "person"
-            case .documents:    "document"
-            }
-        }
+    var documentSelection: Binding<Document?> {
+        Binding(
+            get: { itemSelection.document },
+            set: { itemSelection = .documents($0) }
+        )
     }
 
-    @State var selection = Selection.people
+    var personSelection: Binding<Person?> {
+        Binding(
+            get: { itemSelection.person },
+            set: { itemSelection = .people($0) }
+        )
+    }
 
     var body: some View {
         NavigationSplitView {
             VStack {
                 Group {
-                    switch selection {
-                    case .people:       PersonOrganizer()
-                    case .documents:    DocumentOrganizer()
+                    switch itemSelection {
+                    case .people:       PersonOrganizer(selection: personSelection)
+                    case .documents:    DocumentOrganizer(selection: documentSelection)
                     }
                 }
                 .padding(.bottom, 8)
@@ -44,20 +39,38 @@ struct ContentView: View {
                 Divider()
 
                 HStack(spacing: 16) {
-                    ForEach(Selection.allCases, id: \.self) { item in
-                        SimpleButton(label: item.labelName, imageName: item.imageName, selected: selection == item) {
-                            withAnimation { selection = item }
+                    ForEach(ItemSelection.Category.allCases, id: \.self) { category in
+                        SimpleButton(label: category.tabName, imageName: category.tabImage, selected: itemSelection.category == category) {
+                            withAnimation { itemSelection = category.defaultSelection }
                         }
                     }
                 }
                 .padding()
             }
-            .navigationDestination(for: Document.self) { DocumentDetail($0).id($0.fileURL) }
-            .navigationDestination(for: Person.self) { PersonDetail($0).id($0.identifier) }
+            .navigationDestination(for: Document.self, destination: documentDetail)
+            .navigationDestination(for: Person.self, destination: personDetail)
             .navigationSplitViewColumnWidth(min: 264, ideal: 320)
         } detail: {
             Text("Select an item")
         }
+    }
+
+    @ViewBuilder
+    func documentDetail(for document: Document) -> some View {
+        DocumentDetail(document)
+            .id(document.fileURL)
+            .environment(\.revealItem, .init(handleItemReveal))
+    }
+
+    @ViewBuilder
+    func personDetail(for person: Person) -> some View {
+        PersonDetail(person)
+            .id(person.identifier)
+            .environment(\.revealItem, .init(handleItemReveal))
+    }
+
+    func handleItemReveal(_ selection: ItemSelection) {
+        withAnimation { itemSelection = selection }
     }
 }
 

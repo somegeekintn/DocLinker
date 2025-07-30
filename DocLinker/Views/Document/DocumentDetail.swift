@@ -48,7 +48,7 @@ struct DocumentDetail: View {
                 Text("People")
                 List(selection: $personSelection) {
                     ForEach(doc.people, id: \.self) { person in
-                        PersonRow(person)
+                        PersonRow(person, inNavigator: false)
                     }
                 }
                 .frame(height: 320)

@@ -13,20 +13,23 @@ struct DocumentList: View {
     @Query var docs: [Document]
     @State var presentFiles: Bool = false
     @State var dropTargeted: Bool = false
+    @Binding var selection: Document?
 
     var dropTargetColor: Color { dropTargeted ? .green : .clear }
 
-    init(query: Query<Document, [Document]>) {
+    init(query: Query<Document, [Document]>, selection: Binding<Document?>) {
         self._docs = query
+        self._selection = selection
     }
 
     var body: some View {
-        List() {
+        List(selection: $selection) {
             ForEach(docs) { doc in
                 NavigationLink(value: doc) { DocumentRow(doc, inNavigator: true) }
             }
             .onDelete(perform: deleteItems)
         }
+        .listStyle(.sidebar)
     }
 
     func deleteItems(offsets: IndexSet) {
@@ -39,5 +42,5 @@ struct DocumentList: View {
 }
 
 #Preview {
-    DocumentList(query: Document.defaultQuery)
+    DocumentList(query: Document.defaultQuery, selection: .constant(nil))
 }

@@ -11,19 +11,24 @@ struct DocumentOrganizer: View {
     @Environment(\.modelContext) var modelContext
     @State var presentFiles: Bool = false
     @State var dropTargeted: Bool = false
+    @Binding var selection: Document?
 
     var dropTargetColor: Color { dropTargeted ? .green : .clear }
 
+    init(selection: Binding<Document?>) {
+        self._selection = selection
+    }
+
     var body: some View {
         VStack {
-            DocumentList(query: Document.defaultQuery)
+            DocumentList(query: Document.defaultQuery, selection: $selection)
             Spacer()
             Button(action: { presentFiles = true }) {
                 HStack(spacing: 8) {
                     Image(systemName: "document.badge.plus")
                     Text("Add Item")
                 }
-                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
             }
         }
         .border(dropTargetColor)
@@ -64,5 +69,5 @@ struct DocumentOrganizer: View {
 }
 
 #Preview {
-    DocumentOrganizer()
+    DocumentOrganizer(selection: .constant(nil))
 }

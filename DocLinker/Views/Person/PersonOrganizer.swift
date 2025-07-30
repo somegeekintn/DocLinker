@@ -12,17 +12,22 @@ struct PersonOrganizer: View {
     @Environment(\.modelContext) var modelContext
     @State var newPerson: Person?
     @State var validationError: Bool = false
+    @Binding var selection: Person?
+
+    init(selection: Binding<Person?>) {
+        self._selection = selection
+    }
 
     var body: some View {
         VStack {
-            PersonList(query: Person.defaultQuery)
+            PersonList(query: Person.defaultQuery, selection: $selection)
             Spacer()
             Button(action: { prepareNewPerson() }) {
                 HStack(spacing: 8) {
                     Image(systemName: "person.badge.plus")
                     Text("Add Person")
                 }
-                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
             }
         }
         .sheet(item: $newPerson) { person in
