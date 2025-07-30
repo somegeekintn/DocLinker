@@ -141,4 +141,28 @@ final class Document: Codable {
 
         return String(fileURL.path.dropFirst(root.path.count))
     }
+
+    @discardableResult
+    static func addDocumentFrom(url: URL, context: ModelContext) -> Result<Document, any Error> {
+        do {
+            let resolvedURL = url.resolvingSymlinksInPath()
+            let docs = try context.fetch(FetchDescriptor<Document>(predicate: #Predicate {$0.fileURL == resolvedURL }))
+
+            if let result = docs.first {
+                return .success(result)
+            }
+            else {
+                let newDoc = try Document(fileURL: resolvedURL)
+
+                context.insert(newDoc)
+
+                return .success(newDoc)
+            }
+        }
+        catch {
+            Logger.app.error("Failed to add new document: \(error)")
+
+            return .failure(error)
+        }
+    }
 }

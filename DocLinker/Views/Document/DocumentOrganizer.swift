@@ -57,14 +57,7 @@ struct DocumentOrganizer: View {
     }
 
     func addDocumentFrom(url: URL) {
-        do {
-            let newItem = try Document(fileURL: url)
-
-            withAnimation { modelContext.insert(newItem) }
-        }
-        catch {
-            print("Failed to add new item: \(error)")
-        }
+        withAnimation { Document.addDocumentFrom(url: url, context: modelContext); return }
     }
 }
 

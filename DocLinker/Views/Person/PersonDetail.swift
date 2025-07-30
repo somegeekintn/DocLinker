@@ -74,14 +74,13 @@ struct PersonDetail: View {
 
     func addItemFrom(url: URL) {
         do {
-            let docs = try modelContext.fetch(FetchDescriptor<Document>(predicate: #Predicate {$0.fileURL == url }))
-            let doc = try docs.first ?? Document(fileURL: url)
+            let doc = try Document.addDocumentFrom(url: url, context: modelContext).get()
 
-            withAnimation { doc.people.append(person) }
+            if !doc.people.contains(where: { $0.id == person.id }) {
+                withAnimation { doc.people.append(person) }
+            }
         }
-        catch {
-            Logger.app.error("Failed to add new item: \(error)")
-        }
+        catch { }
     }
 }
 
