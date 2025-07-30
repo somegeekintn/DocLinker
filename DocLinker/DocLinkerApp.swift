@@ -11,12 +11,9 @@ import OSLog
 
 @main
 struct DocLinkerApp: App {
-    @State var showingExporter: Bool = false
-    @State var jsonFile: JSONFile?
-    @State var reportFile: ReportFile?
+    @State var exportFile: ExportFile?
 
-    var exportingJSON: Binding<Bool> { Binding(get: { jsonFile != nil }, set: { _ in jsonFile = nil }) }
-    var exportingReport: Binding<Bool> { Binding(get: { reportFile != nil }, set: { _ in reportFile = nil }) }
+    var exportingFile: Binding<Bool> { Binding(get: { exportFile != nil }, set: { _ in exportFile = nil }) }
 
     let sharedModelContainer: ModelContainer = {
         let schema = Schema([Document.self, Person.self])
@@ -33,16 +30,11 @@ struct DocLinkerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .fileExporter(isPresented: exportingJSON,
-                              document: jsonFile,
-                              contentType: .json,
-                              defaultFilename: "linked-docs",
-                              onCompletion: handleJSONResult)
-                .fileExporter(isPresented: exportingReport,
-                              document: reportFile,
-                              contentType: .plainText,
-                              defaultFilename: "linked-docs",
-                              onCompletion: handleReportResult)
+                .fileExporter(isPresented: exportingFile,
+                              document: exportFile,
+                              contentType: exportFile?.contentType ?? .plainText,
+                              defaultFilename: exportFile?.defaultFilename,
+                              onCompletion: handleExportResult)
         }
         .modelContainer(sharedModelContainer)
         .commands {
@@ -67,7 +59,7 @@ struct DocLinkerApp: App {
             let docs = try context.fetch(FetchDescriptor<Document>())
             let jsonData = try JSONEncoder().encode(docs)
 
-            jsonFile = JSONFile(jsonData: jsonData)
+            exportFile = .json(JSONFile(jsonData: jsonData))
         }
         catch {
             Logger.app.error("Failed to export JSON: \(error)")
@@ -81,22 +73,16 @@ struct DocLinkerApp: App {
             let items = try context.fetch(FetchDescriptor<Document>()).sorted(by: { $0.filename < $1.filename})
             let report = items.map({ $0.reportText }).joined(separator: "\n")
 
-            reportFile = ReportFile(report: report)
+            exportFile = .report(ReportFile(report: report))
         }
         catch {
             Logger.app.error("Failed to generate report: \(error)")
         }
     }
 
-    func handleJSONResult(_ result: Result<URL, any Error>) {
+    func handleExportResult(_ result: Result<URL, any Error>) {
         if case .failure(let error) = result {
-            Logger.app.error("Failed to export JSON: \(error)")
-        }
-    }
-
-    func handleReportResult(_ result: Result<URL, any Error>) {
-        if case .failure(let error) = result {
-            Logger.app.error("Failed to save report: \(error)")
+            Logger.app.error("Failed to export file: \(error)")
         }
     }
 }

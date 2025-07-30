@@ -8,6 +8,38 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+enum ExportFile: FileDocument {
+    case json(JSONFile)
+    case report(ReportFile)
+
+    static var readableContentTypes: [UTType] { [.json, .plainText] }
+
+    var contentType: UTType {
+        switch self {
+        case .json:     .json
+        case .report:   .plainText
+        }
+    }
+
+    var defaultFilename: String {
+        switch self {
+        case .json:     "linked-docs"
+        case .report:   "linked-docs"
+        }
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        self = try configuration.contentType == .json ? .json(JSONFile(configuration: configuration)) : .report(ReportFile(configuration: configuration))
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        switch self {
+        case let .json(jsonFile):       try jsonFile.fileWrapper(configuration: configuration)
+        case let .report(reportFile):   try reportFile.fileWrapper(configuration: configuration)
+        }
+    }
+}
+
 struct JSONFile: FileDocument {
     static var readableContentTypes: [UTType] { [.json] }
 
