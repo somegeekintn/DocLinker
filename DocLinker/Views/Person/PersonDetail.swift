@@ -11,6 +11,7 @@ import OSLog
 
 struct PersonDetail: View {
     @Environment(\.modelContext) var modelContext
+    @Environment(\.revealItem) var revealItem
     @State var person: Person
     @State var dropTargeted: Bool = false
     @State var docSelection: Document? = nil
@@ -42,7 +43,6 @@ struct PersonDetail: View {
             TextField("First", text: $person.firstName)
             TextField("Last", text: $person.lastName)
         }
-//        .textFieldStyle(.roundedBorder)
         .padding(.bottom)
     }
 
@@ -52,9 +52,16 @@ struct PersonDetail: View {
             Text("Items")
             List(selection: $docSelection) {
                 ForEach(person.docs, id: \.self) { doc in
-                    DocumentRow(doc, inNavigator: false)
+                    DocumentRow(doc)
                 }
             }
+            .contextMenu(forSelectionType: Document.self,
+                menu: { items in },
+                primaryAction: { items in
+                    if let doc = items.first {
+                        revealItem(.documents(doc))
+                    }
+                })
         }
         .padding()
         .border(dropTargetColor)

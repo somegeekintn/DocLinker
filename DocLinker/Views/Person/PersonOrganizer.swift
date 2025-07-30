@@ -30,6 +30,7 @@ struct PersonOrganizer: View {
     }
 
     @Environment(\.modelContext) var modelContext
+    @Environment(\.revealItem) var revealItem
     @State var newPerson: Person?
     @State var validationError: Bool = false
     @State var sorting = Sorting.id(false)
@@ -111,6 +112,8 @@ struct PersonOrganizer: View {
                 modelContext.insert(person)
                 validationError = false
                 newPerson = nil
+
+                revealItem(.people(person))
             }
         }
     }

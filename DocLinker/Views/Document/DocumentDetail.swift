@@ -10,6 +10,7 @@ import SwiftUI
 struct DocumentDetail: View {
     @AppStorage(.rootPath) var rootPath: URL?
     @Environment(\.displayScale) var displayScale
+    @Environment(\.revealItem) var revealItem
     @State var doc: Document
     @State var personSelection: Person? = nil
     @State var previewData: Data? = nil
@@ -48,10 +49,17 @@ struct DocumentDetail: View {
                 Text("People")
                 List(selection: $personSelection) {
                     ForEach(doc.people, id: \.self) { person in
-                        PersonRow(person, inNavigator: false)
+                        PersonRow(person)
                     }
                 }
                 .frame(height: 320)
+                .contextMenu(forSelectionType: Person.self,
+                    menu: { items in },
+                    primaryAction: { items in
+                        if let person = items.first {
+                            revealItem(.people(person))
+                        }
+                    })
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()

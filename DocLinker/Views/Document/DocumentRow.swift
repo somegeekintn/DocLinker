@@ -12,12 +12,10 @@ struct DocumentRow: View {
     @Environment(\.revealItem) var revealItem
 
     let doc: Document
-    let inNavigator: Bool
     var filenameDisplay: String { doc.displayPath(root: rootPath) }
 
-    init(_ doc: Document, inNavigator: Bool) {
+    init(_ doc: Document) {
         self.doc = doc
-        self.inNavigator = inNavigator
     }
 
     var body: some View {
@@ -34,10 +32,12 @@ struct DocumentRow: View {
         }
         .frame(height: 24)
         .contextMenu {
-            if !inNavigator {
-                Button("Reveal in Navigator") { revealItem(.documents(doc)) }
-            }
             Button("Reveal in Finder") { NSWorkspace.shared.activateFileViewerSelecting([doc.fileURL]) }
+            Menu("Category") {
+                ForEach(Document.Category.allCases) { category in
+                    Button(category.displayText) { doc.category = category }
+                }
+            }
         }
     }
 
@@ -45,7 +45,7 @@ struct DocumentRow: View {
 
 #Preview {
     if let doc = try? Document(fileURL: URL(fileURLWithPath: "/Users/casey")) {
-        DocumentRow(doc, inNavigator: false)
+        DocumentRow(doc)
     }
     else {
         Text("Failed")

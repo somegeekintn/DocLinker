@@ -25,7 +25,7 @@ struct DocumentList: View {
     var body: some View {
         List(selection: $selection) {
             ForEach(docs) { doc in
-                NavigationLink(value: doc) { DocumentRow(doc, inNavigator: true) }
+                NavigationLink(value: doc) { DocumentRow(doc) }
             }
             .onDelete(perform: deleteItems)
         }

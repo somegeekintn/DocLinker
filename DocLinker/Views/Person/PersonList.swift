@@ -21,10 +21,9 @@ struct PersonList: View {
     var body: some View {
         List(selection: $selection) {
             ForEach(people) { person in
-                NavigationLink(value: person) { PersonRow(person, inNavigator: true) }
+                NavigationLink(value: person) { PersonRow(person) }
             }
             .onDelete(perform: deleteItems)
-
         }
     }
 

@@ -45,12 +45,29 @@ struct ContentView: View {
                     }
                 }
                 .padding(.bottom)
+                .environment(\.revealItem, .init(handleItemReveal))
             }
             .navigationDestination(for: Document.self, destination: documentDetail)
             .navigationDestination(for: Person.self, destination: personDetail)
             .navigationSplitViewColumnWidth(min: 264, ideal: 320)
         } detail: {
-            Text("Select an item")
+            switch itemSelection {
+            case let .people(person):
+                if let person {
+                    personDetail(for: person)
+                }
+                else {
+                    Text("Select a person")
+                }
+                
+            case let .documents(doc):
+                if let doc {
+                    documentDetail(for: doc)
+                }
+                else {
+                    Text("Select a document")
+                }
+            }
         }
     }
 
