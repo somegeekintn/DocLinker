@@ -9,20 +9,26 @@ import SwiftUI
 
 struct SimpleButton: View {
     let label: String
-    let imageName: String
+    let imageNames: [String]
     let selected: Bool
     let action: () -> Void
 
     init(label: String, imageName: String, selected: Bool = false, action: @escaping () -> Void) {
+        self.init(label: label, imageNames: [imageName], selected: selected, action: action)
+    }
+    
+    init(label: String, imageNames: [String], selected: Bool = false, action: @escaping () -> Void) {
         self.label = label
-        self.imageName = imageName
+        self.imageNames = imageNames
         self.selected = selected
         self.action = action
     }
     
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: imageName)
+            ForEach(imageNames, id: \.self) { imageName in
+                Image(systemName: imageName)
+            }
             Text(label)
         }
         .font(.title2)

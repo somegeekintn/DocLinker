@@ -35,10 +35,14 @@ struct PersonDetail: View {
 
     var fieldsView: some View {
         HStack {
-            TextField("ID", text: $person.identifier).frame(maxWidth: 64)
+            HStack(spacing: 0) {
+                Text("I")
+                TextField("ID", value: $person.identifier, format: .number).frame(maxWidth: 64)
+            }
             TextField("First", text: $person.firstName)
             TextField("Last", text: $person.lastName)
         }
+//        .textFieldStyle(.roundedBorder)
         .padding(.bottom)
     }
 
@@ -85,5 +89,5 @@ struct PersonDetail: View {
 }
 
 #Preview {
-    PersonDetail(Person(identifier: "Preview", firstName: "John", lastName: "Doe"))
+    PersonDetail(Person(identifier: 123, firstName: "John", lastName: "Doe"))
 }

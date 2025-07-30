@@ -27,17 +27,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            VStack {
-                Group {
-                    switch itemSelection {
-                    case .people:       PersonOrganizer(selection: personSelection)
-                    case .documents:    DocumentOrganizer(selection: documentSelection)
-                    }
-                }
-                .padding(.bottom, 8)
-
-                Divider()
-
+            VStack(spacing: 16) {
                 HStack(spacing: 16) {
                     ForEach(ItemSelection.Category.allCases, id: \.self) { category in
                         SimpleButton(label: category.tabName, imageName: category.tabImage, selected: itemSelection.category == category) {
@@ -45,7 +35,16 @@ struct ContentView: View {
                         }
                     }
                 }
-                .padding()
+
+                Divider()
+
+                Group {
+                    switch itemSelection {
+                    case .people:       PersonOrganizer(selection: personSelection)
+                    case .documents:    DocumentOrganizer(selection: documentSelection)
+                    }
+                }
+                .padding(.bottom)
             }
             .navigationDestination(for: Document.self, destination: documentDetail)
             .navigationDestination(for: Person.self, destination: personDetail)

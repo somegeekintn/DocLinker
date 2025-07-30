@@ -66,7 +66,7 @@ final class Document: Codable {
     }
 
     @MainActor
-    static var defaultQuery: Query<Document, [Document]> { Query(sort: [SortDescriptor(\.filename)]) }
+    static var defaultQuery: Query<Document, [Document]> { Query(sort: [SortDescriptor(\.filename, order: .forward)]) }
 
     init(fileURL: URL, notes: String = "", category: Category = .general, incomplete: Bool = false) throws {
         self.fileURL = fileURL

@@ -16,7 +16,7 @@ final class Person: Codable {
         case lastName
     }
 
-    @Attribute(.unique) var identifier: String
+    @Attribute(.unique) var identifier: Int
     var firstName: String
     var lastName: String
     var docs: [Document] = []
@@ -27,7 +27,7 @@ final class Person: Codable {
     @MainActor
     static var defaultQuery: Query<Person, [Person]> { Query(sort: [SortDescriptor(\.lastName), SortDescriptor(\.firstName)]) }
 
-    init(identifier: String, firstName: String, lastName: String) {
+    init(identifier: Int, firstName: String, lastName: String) {
         self.identifier = identifier
         self.firstName = firstName
         self.lastName = lastName
@@ -36,7 +36,7 @@ final class Person: Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        identifier = try container.decode(String.self, forKey: .identifier)
+        identifier = try container.decode(Int.self, forKey: .identifier)
         firstName = try container.decode(String.self, forKey: .firstName)
         lastName = try container.decode(String.self, forKey: .lastName)
         // Item codes Person so we do not decode items in Person
