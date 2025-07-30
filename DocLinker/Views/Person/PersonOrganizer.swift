@@ -24,7 +24,7 @@ struct PersonOrganizer: View {
 
                 return Query(sort: [SortDescriptor(\.lastName, order: order), SortDescriptor(\.firstName, order: order)])
             case let .id(reversed):
-                return Query(sort: \.id, order: reversed ? .reverse : .forward)
+                return Query(sort: \.identifier, order: reversed ? .reverse : .forward)
             }
         }
     }

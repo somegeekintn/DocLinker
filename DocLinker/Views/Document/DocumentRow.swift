@@ -29,6 +29,8 @@ struct DocumentRow: View {
             }
             Text(filenameDisplay)
                 .font(.body)
+            Spacer()
+            DocumentCategory(category: doc.category)
         }
         .frame(height: 24)
         .contextMenu {
