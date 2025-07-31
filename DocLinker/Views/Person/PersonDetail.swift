@@ -34,18 +34,24 @@ struct PersonDetail: View {
         }
     }
 
+    @ViewBuilder
     var fieldsView: some View {
-        HStack {
-            HStack(spacing: 0) {
-                Text("I")
-                TextField("ID", value: $person.identifier, format: .number).frame(maxWidth: 64)
+        VStack {
+            HStack {
+                HStack(spacing: 0) {
+                    Text("I")
+                    TextField("ID", value: $person.identifier, format: .number.grouping(.never)).frame(maxWidth: 64)
+                }
+                TextField("First", text: $person.firstName)
+                TextField("Last", text: $person.lastName)
             }
-            TextField("First", text: $person.firstName)
-            TextField("Last", text: $person.lastName)
+
+            TextField("Notes", text: $person.notes, axis: .vertical)
         }
         .padding(.bottom)
     }
 
+    @ViewBuilder
     var fullVersion: some View {
         VStack {
             fieldsView

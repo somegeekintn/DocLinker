@@ -30,7 +30,7 @@ struct DocumentRow: View {
             Spacer()
             DocumentCategory(category: doc.category)
         }
-        .frame(height: 24)
+        .frame(height: 28)
         .contextMenu {
             Button("Reveal in Finder") { NSWorkspace.shared.activateFileViewerSelecting([doc.fileURL]) }
             Menu("Category") {

@@ -14,11 +14,13 @@ final class Person: Codable {
         case identifier
         case firstName
         case lastName
+        case notes
     }
 
     @Attribute(.unique) var identifier: Int
     var firstName: String
     var lastName: String
+    var notes: String = ""
     var docs: [Document] = []
 
     var fullName: String { "\(lastName), \(firstName)" }
@@ -27,10 +29,11 @@ final class Person: Codable {
     @MainActor
     static var defaultQuery: Query<Person, [Person]> { Query(sort: [SortDescriptor(\.lastName), SortDescriptor(\.firstName)]) }
 
-    init(identifier: Int, firstName: String, lastName: String) {
+    init(identifier: Int, firstName: String, lastName: String, notes: String = "") {
         self.identifier = identifier
         self.firstName = firstName
         self.lastName = lastName
+        self.notes = notes
     }
 
     required init(from decoder: Decoder) throws {
@@ -39,6 +42,7 @@ final class Person: Codable {
         identifier = try container.decode(Int.self, forKey: .identifier)
         firstName = try container.decode(String.self, forKey: .firstName)
         lastName = try container.decode(String.self, forKey: .lastName)
+        notes = try container.decode(String.self, forKey: .notes)
         // Item codes Person so we do not decode items in Person
     }
 
@@ -48,5 +52,6 @@ final class Person: Codable {
         try container.encode(identifier, forKey: .identifier)
         try container.encode(firstName, forKey: .firstName)
         try container.encode(lastName, forKey: .lastName)
+        try container.encode(notes, forKey: .notes)
     }
 }

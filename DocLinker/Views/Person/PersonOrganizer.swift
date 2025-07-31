@@ -105,6 +105,7 @@ struct PersonOrganizer: View {
 
     func insertPerson(_ person: Person) {
         withAnimation {
+#warning("TODO (cwf): need to confirm id is unique")
             if person.identifier == 0 || person.firstName.isEmpty || person.lastName.isEmpty {
                 validationError = true
             }

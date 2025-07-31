@@ -27,10 +27,10 @@ struct PersonRow: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
 
-            Text("(I\(person.identifier)): \(person.lastName), \(person.firstName) [\(person.docs.count)]")
+            Text(verbatim: "(I\(person.identifier): \(person.lastName), \(person.firstName) [\(person.docs.count)]")
                 .font(.body)
         }
-        .frame(height: 24)
+        .frame(height: 28)
         .contextMenu {
             Button("Open page") { personURL.map { openURL($0) } }
         }
